@@ -1,23 +1,24 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let birdY, birdX, velocity, score, gameRunning;
+let ballY, ballX, velocity, score, gameRunning;
 let pipes = [];
 let highScore = localStorage.getItem('flappyHighScore') || 0;
 
-// ADJUSTED PHYSICS (Easier Mode)
-const gravity = 0.15;      // Reduced (was 0.25) - Bird falls slower
-const jump = -4.0;         // Reduced (was -5.2) - Jump is less aggressive
+
+
+const gravity = 0.15;     
+const jump = -4.0;         
 const pipeWidth = 70;
-const pipeGap = 220;       // Increased (was 170) - Much wider opening
-const pipeSpeed = 2.5;     // Reduced (was 4.0) - Pipes move slower
+const pipeGap = 220;       
+const pipeSpeed = 2.5;   
 
 function init() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
-    birdX = canvas.width * 0.25;
-    birdY = canvas.height / 2;
+    ballX = canvas.width * 0.25;
+    ballY = canvas.height / 2;
     velocity = 0;
     score = 0;
     pipes = [];
@@ -43,14 +44,16 @@ function update() {
     if (!gameRunning) return;
 
     velocity += gravity;
-    birdY += velocity;
+    ballY += velocity;
 
-    // Boundary check
-    if (birdY > canvas.height || birdY < 0) {
+
+    
+    if (ballY > canvas.height || ballY < 0) {
         endGame();
     }
 
-    // Pipe spawning frequency
+
+    
     if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 450) {
         createPipe();
     }
@@ -59,14 +62,17 @@ function update() {
         pipes[i].x -= pipeSpeed;
 
         // Collision
-        if (birdX + 15 > pipes[i].x && birdX - 15 < pipes[i].x + pipeWidth) {
-            if (birdY - 15 < pipes[i].y || birdY + 15 > pipes[i].y + pipeGap) {
+        if (ballX + 15 > pipes[i].x && ballX - 15 < pipes[i].x + pipeWidth) {
+            if (ballY - 15 < pipes[i].y || ballY + 15 > pipes[i].y + pipeGap) {
                 endGame();
             }
         }
 
-        // Scoring
-        if (pipes[i].x + pipeWidth < birdX && !pipes[i].passed) {
+
+
+
+        
+        if (pipes[i].x + pipeWidth < ballX && !pipes[i].passed) {
             score++;
             pipes[i].passed = true;
         }
@@ -83,7 +89,8 @@ function endGame() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Pipes
+
+    
     ctx.fillStyle = "#2ecc71";
     pipes.forEach(p => {
         ctx.fillRect(p.x, 0, pipeWidth, p.y);
@@ -94,14 +101,17 @@ function draw() {
         ctx.strokeRect(p.x, p.y + pipeGap, pipeWidth, canvas.height);
     });
 
-    // Draw Bird
+
+
+    
     ctx.fillStyle = "#f1c40f";
     ctx.beginPath();
-    ctx.arc(birdX, birdY, 15, 0, Math.PI * 2);
+    ctx.arc(ballX, ballY, 15, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
-    // SIDE SCOREBOARD (Right Hand Side)
+
+    
     const panelWidth = 200;
     const panelX = canvas.width - panelWidth - 20;
     
@@ -154,4 +164,5 @@ window.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e
 window.addEventListener('resize', init);
 
 init();
+
 loop();
